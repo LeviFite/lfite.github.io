@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylish Scrolling Page</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Bangers&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <style>
+        :root {
+            --primary-bg: #212529;
+            --primary-text: #f8f9fa;
+            --nav-bg: #f8f9fa;
+            --nav-text: #212529;
+            --accent-color: #0d6efd;
+        }
+        
+        /* General Body & Font Styling */
+        body {
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            font-family: 'Roboto', sans-serif;
+            letter-spacing: 0.5px;
+            padding-top: 70px; /* Prevent content from being hidden by fixed navbar */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bangers', cursive;
+            letter-spacing: 2px;
+            color: var(--primary-text);
+        }
+
+        /* Utility: Rounded Corners */
+        .rounded-corners {
+            border-radius: 15px;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: var(--nav-bg);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem;
+            color: var(--nav-text) !important;
+        }
+        
+        .navbar-brand .material-symbols-outlined {
+            font-size: 2rem;
+            vertical-align: middle;
+            color: var(--accent-color);
+        }
+
+        .nav-link {
+            font-weight: bold;
+            color: var(--nav-text) !important;
+        }
+
+        .nav-link .material-symbols-outlined {
+            vertical-align: bottom;
+            margin-right: 5px;
+        }
+        
+        .dropdown-menu {
+             border-radius: 10px;
+        }
+
+        /* Jumbotron Section */
+        .jumbotron-fade {
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        .jumbotron-fade.visible {
+            opacity: 1;
+        }
+        .blockquote {
+            border-left: 5px solid var(--accent-color);
+            padding-left: 20px;
+            font-size: 1.25rem;
+            font-style: italic;
+        }
+
+        /* Section Padding */
+        section {
+            padding: 60px 0;
+        }
+        
+        /* Content Loader for Infinite Scroll */
+        #content-loader {
+            text-align: center;
+            padding: 20px;
+            display: none; /* Hidden by default */
+        }
+        
+        /* Styling for Jumbotron Modal Buttons */
+        .btn-modal-custom {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: var(--primary-text);
+            font-family: 'Bangers', cursive;
+            letter-spacing: 1.5px;
+            font-size: 1.5rem;
+            border-radius: 15px; /* Matches .rounded-corners */
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-modal-custom:hover,
+        .btn-modal-custom:focus {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--primary-text);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-modal-custom .icon-lg {
+            font-size: 3.5rem; /* Makes icons large */
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Modal Content Styling (General) */
+        .modal-content {
+            border: none;
+        }
+
+        /* --- Marquee Carousel Styles --- */
+        .marquee-container {
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            white-space: nowrap;
+            padding: 10px 0;
+        }
+
+        .marquee-container:hover .marquee-content {
+            animation-play-state: paused;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation-name: scroll-left;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        .marquee-content { animation-duration: 50s; }
+        .image-marquee { animation-duration: 60s; }
+        .gif-marquee { animation-duration: 45s; }
+
+
+        .marquee-item {
+            display: inline-block;
+            margin: 0 15px;
+            width: 350px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .marquee-item:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes scroll-left {
+            from { transform: translateX(0%); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* --- Video Section Styles (on main page) --- */
+        .video-player-main {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #000;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-view-more {
+            width: 80px;
+            height: 80px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-view-more:hover {
+            background-color: #0b5ed7;
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .btn-view-more .material-symbols-outlined {
+            font-size: 48px;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+
+        /*
+        ============================================================
+        --- NEW STYLES FOR THE FEATURED VIDEOS TRANSITION ---
+        ============================================================
+        */
+        .new-video-wrapper {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .new-video-wrapper.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /*
+        ============================================================
+        --- STYLES FOR THE MERGED VIDEO GALLERY MODAL ---
+        ============================================================
+        */
+        
+        /* Specific styling for the Video Modals to avoid conflicts */
+        #moviesModal .modal-content, #fjvidsModal .modal-content {
+            background-color: #1c1c1e; /* A slightly different dark for the gallery */
+        }
+        
+        #moviesModal .modal-header, #moviesModal .modal-footer,
+        #fjvidsModal .modal-header, #fjvidsModal .modal-footer {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Styles for each 300x300 video container in the grid */
+        .gallery-item-wrapper {
+            width: 300px;
+            height: 300px;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Styles for the video element itself */
+        .gallery-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px; /* Rounded corners */
+            background-color: #000;
+        }
+
+        /* Style for the gallery "Load More" button */
+        .gallery-load-more-btn {
+            font-size: 1.5rem;
+            line-height: 1.5;
+            padding: 10px 25px;
+        }
+
+        .gallery-load-more-btn .plus-symbol {
+            font-weight: 700;
+        }
+
+        /* Styles for the slide-in animation */
+        .gallery-row {
+            transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+            opacity: 0;
+        }
+        
+        .gallery-row.slide-from-left {
+            transform: translateX(-100px);
+        }
+
+        .gallery-row.slide-from-right {
+            transform: translateX(100px);
+        }
+        
+        .gallery-row.is-visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        /*
+        ============================================================
+        --- NEW JUMBOTRON & CARDS SECTION ---
+        ============================================================
+        */
+        #sticker-jumbotron-section {
+            padding: 0; /* Override default section padding */
+            opacity: 0;
+            transform: translateX(-100px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        #sticker-jumbotron-section.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .comic-jumbotron {
+            height: 300px;
+            width: 100%;
+            background-color: #ffde59; /* Bright yellow */
+            background-image: radial-gradient(#000000 10%, transparent 10%);
+            background-size: 20px 20px;
+            border: 10px solid #000000;
+            box-shadow: inset 0 0 0 5px #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pokemon-card {
+            border: 5px solid #ffffff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+            width: 180px; /* Custom width for pokemon card feel */
+        }
+        
+        .pokemon-card:hover {
+            transform: translateY(-10px) rotate(3deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        .pokemon-card .card-img-top {
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-bottom: 3px solid #ffffff;
+        }
+
+        .pokemon-card .card-body {
+            padding: 0.75rem;
+        }
+
+        .pokemon-card .card-title {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .pokemon-card .card-text {
+            font-size: 0.75rem;
+            color: #333;
+        }
+
+        /* Pastel colors for cards */
+        .card-pastel-pink { background-color: #f8c8dc; }
+        .card-pastel-blue { background-color: #c8dcf8; }
+        .card-pastel-green { background-color: #dcf8c8; }
+
+
+        /* Printer Friendly Styles */
+        @media print {
+            body {
+                padding-top: 0;
+                background-color: #ffffff;
+                color: #000000;
+            }
+            .navbar, footer, .btn, .modal {
+                display: none;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                color: #000000;
+            }
+            .card, .jumbotron, .video-player-main {
+                 border: 1px solid #ddd;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <span class="material-symbols-outlined">rocket_launch</span>
+                Neat Brand
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#featured"><span class="material-symbols-outlined">star</span>Featured</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="featuredDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                           <span class="material-symbols-outlined">arrow_drop_down</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="featuredDropdown">
+                            <li><a class="dropdown-item" href="#videos">Videos</a></li>
+                            <li><a class="dropdown-item" href="#photos">Photos</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about"><span class="material-symbols-outlined">info</span>About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#downloads"><span class="material-symbols-outlined">download</span>Downloads</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="seedboxDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                           <span class="material-symbols-outlined">dns</span>SeedBox
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="seedboxDropdown">
+                            <li><a class="dropdown-item" href="https://45-128-27-156.a.seedbox.vip:1443/~user/" target="_blank">HOME</a></li>
+                            <li><a class="dropdown-item" href="https://45-128-27-156.a.seedbox.vip:1443/~user/Downloads" target="_blank">DOWNLOADS</a></li>
+                            <li><a class="dropdown-item" href="https://45-128-27-156.a.seedbox.vip:1443/~user/Downloads/Adult/" target="_blank">OTHER</a></li>
+                            <li><a class="dropdown-item" href="https://45-128-27-156.a.seedbox.vip:1443/~user/Downloads/Adult/Gay/OnlyFans/" target="_blank">FANS</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact"><span class="material-symbols-outlined">mail</span>Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <section id="featured">
+            <h2 class="text-center mb-5">Featured</h2>
+
+            <div class="mb-5" id="videos">
+                <h3 class="mb-3">Videos</h3>
+                
+                <video id="main-video-player" class="video-player-main rounded-corners mb-4" controls preload="metadata">
+                    </video>
+
+                <div id="video-gallery" class="row g-4">
+                </div>
+
+                <div class="text-center mt-4">
+                    <button id="load-more-videos-btn" class="btn btn-view-more rounded-circle">
+                        <span class="material-symbols-outlined">add</span>
+                    </button>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                     <h3 class="mb-3" id="photos">Pictures</h3>
+                     <div class="marquee-container">
+                        <div class="marquee-content image-marquee">
+                            <img src="https://picsum.photos/600/400?random=10" class="marquee-item rounded-corners" alt="Random placeholder image">
+                            <img src="https://picsum.photos/600/400?random=11" class="marquee-item rounded-corners" alt="Random placeholder image">
+                            <img src="https://picsum.photos/600/400?random=12" class="marquee-item rounded-corners" alt="Random placeholder image">
+                            <img src="https://picsum.photos/600/400?random=13" class="marquee-item rounded-corners" alt="Random placeholder image">
+                            <img src="https://picsum.photos/600/400?random=10" class="marquee-item rounded-corners" alt="Random placeholder image">
+                            <img src="https://picsum.photos/600/400?random=11" class="marquee-item rounded-corners" alt="Random placeholder image">
+                            <img src="https://picsum.photos/600/400?random=12" class="marquee-item rounded-corners" alt="Random placeholder image">
+                            <img src="https://picsum.photos/600/400?random=13" class="marquee-item rounded-corners" alt="Random placeholder image">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h3 class="mb-3" id="gifs">Gifs</h3>
+                    <div class="marquee-container">
+                        <div class="marquee-content gif-marquee">
+                            <img src="https://picsum.photos/id/102/400/400.gif" class="marquee-item rounded-corners" alt="Random placeholder gif">
+                            <img src="https://picsum.photos/id/103/400/400.gif" class="marquee-item rounded-corners" alt="Random placeholder gif">
+                            <img src="https://picsum.photos/id/104/400/400.gif" class="marquee-item rounded-corners" alt="Random placeholder gif">
+                            <img src="https://picsum.photos/id/105/400/400.gif" class="marquee-item rounded-corners" alt="Random placeholder gif">
+                            <img src="https://picsum.photos/id/102/400/400.gif" class="marquee-item rounded-corners" alt="Random placeholder gif">
+                            <img src="https://picsum.photos/id/103/400/400.gif" class="marquee-item rounded-corners" alt="Random placeholder gif">
+                            <img src="https://picsum.photos/id/104/400/400.gif" class="marquee-item rounded-corners" alt="Random placeholder gif">
+                            <img src="https://picsum.photos/id/105/400/400.gif" class="marquee-item rounded-corners" alt="Random placeholder gif">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="about">
+            <h2 class="text-center mb-4">A Little About The Company...</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque, sapien eget lacinia aliquam, nisi eros congue tortor, in accumsan leo elit non mi. Sed eget dictum quam. Vivamus quis magna at nunc dapibus mollis. Curabitur nec quam ut magna facilisis malesuada. Integer nec orci sed neque commodo vestibulum.</p>
+            <p>Phasellus et magna vel turpis scelerisque congue. Duis vel libero vitae leo commodo consequat. Nam in eros id sem venenatis vestibulum ac vitae quam. Proin non velit nec libero.</p>
+            
+            <p>
+                <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseAbout" role="button">
+                    Read More...
+                </a>
+            </p>
+            <div class="collapse" id="collapseAbout">
+                <div class="card card-body bg-dark text-white rounded-corners">
+                   <p>Suspendisse potenti. Mauris id ex id ex auctor pulvinar. Ut vel ligula nec justo ullamcorper facilisis. Aliquam erat volutpat. Cras at justo nec nunc lacinia tincidunt. Sed interdum, felis vel bibendum scelerisque, eros elit malesuada nisi, at feugiat sem eros vel est. Fusce vel nulla vel nunc vulputate vehicula.</p>
+                   <p>Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit sit amet non magna. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
+                </div>
+            </div>
+        </section>
+
+		<hr>
+
+        <section id="media-hub">
+            <div class="container-fluid bg-dark p-5 rounded-corners text-center">
+                <h2 class="display-4 mb-5">Media Hub</h2>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-lg-4">
+                        <button type="button" class="btn btn-modal-custom w-100 p-4 mb-4" data-bs-toggle="modal" data-bs-target="#moviesModal">
+                            <span class="material-symbols-outlined icon-lg">movie</span>
+                            <span class="d-block mt-2">Movies & Cinema</span>
+                        </button>
+                        <button type="button" class="btn btn-modal-custom w-100 p-4 mb-4" data-bs-toggle="modal" data-bs-target="#musicModal">
+                            <span class="material-symbols-outlined icon-lg">music_note</span>
+                            <span class="d-block mt-2">Music & Audio</span>
+                        </button>
+                    </div>
+                    <div class="col-lg-4">
+                        <button type="button" class="btn btn-modal-custom w-100 p-4 mb-4" data-bs-toggle="modal" data-bs-target="#photosModal">
+                            <span class="material-symbols-outlined icon-lg">photo_camera</span>
+                            <span class="d-block mt-2">Photography</span>
+                        </button>
+                        <button type="button" class="btn btn-modal-custom w-100 p-4 mb-4" data-bs-toggle="modal" data-bs-target="#podcastsModal">
+                            <span class="material-symbols-outlined icon-lg">podcasts</span>
+                            <span class="d-block mt-2">Podcasts</span>
+                        </button>
+                    </div>
+                    <div class="col-lg-4">
+                        <button type="button" class="btn btn-modal-custom w-100 p-4 mb-4" data-bs-toggle="modal" data-bs-target="#articlesModal">
+                            <span class="material-symbols-outlined icon-lg">article</span>
+                            <span class="d-block mt-2">Articles & News</span>
+                        </button>
+                        <button type="button" class="btn btn-modal-custom w-100 p-4 mb-4" data-bs-toggle="modal" data-bs-target="#fjvidsModal">
+                            <span class="material-symbols-outlined icon-lg">video_library</span>
+                            <span class="d-block mt-2">FJvids</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="modal fade" id="moviesModal" tabindex="-1" aria-labelledby="moviesModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title h4" id="moviesModalLabel">
+                    <span class="material-symbols-outlined" style="vertical-align:-5px;">movie</span> 
+                    Video Collection
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="container-fluid">
+                    <div id="videoGalleryGridContainer"></div>
+                </div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                 <button type="button" class="btn btn-outline-light gallery-load-more-btn" id="galleryLoadMoreBtn">
+                    <span class="plus-symbol">+</span> Load More
+                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="fjvidsModal" tabindex="-1" aria-labelledby="fjvidsModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title h4" id="fjvidsModalLabel">
+                    <span class="material-symbols-outlined" style="vertical-align:-5px;">video_library</span> 
+                    FJvids Collection
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="container-fluid">
+                    <div id="fjvidsGalleryGridContainer"></div>
+                </div>
+              </div>
+              <div class="modal-footer d-flex justify-content-center">
+                 <button type="button" class="btn btn-outline-light gallery-load-more-btn" id="fjvidsGalleryLoadMoreBtn">
+                    <span class="plus-symbol">+</span> Load More
+                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="musicModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content bg-dark text-white rounded-corners"><div class="modal-header border-secondary"><h5 class="modal-title h4"><span class="material-symbols-outlined" style="vertical-align: -5px;">music_note</span> Music & Audio</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Feature your latest album, single, or audio project here.</p></div><div class="modal-footer border-secondary"><button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button></div></div></div></div>
+        <div class="modal fade" id="photosModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content bg-dark text-white rounded-corners"><div class="modal-header border-secondary"><h5 class="modal-title h4"><span class="material-symbols-outlined" style="vertical-align: -5px;">photo_camera</span> Photography</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>A gallery of your finest photography work.</p><img src="https://picsum.photos/800/400?random=4" class="img-fluid rounded-corners mt-3" alt="Photography placeholder"></div><div class="modal-footer border-secondary"><button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button></div></div></div></div>
+        <div class="modal fade" id="podcastsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content bg-dark text-white rounded-corners"><div class="modal-header border-secondary"><h5 class="modal-title h4"><span class="material-symbols-outlined" style="vertical-align: -5px;">podcasts</span> Podcasts</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Embed your latest podcast episode here.</p></div><div class="modal-footer border-secondary"><button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button></div></div></div></div>
+        <div class="modal fade" id="articlesModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content bg-dark text-white rounded-corners"><div class="modal-header border-secondary"><h5 class="modal-title h4"><span class="material-symbols-outlined" style="vertical-align: -5px;">article</span> Articles & News</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Share your latest blog posts, news, or written content.</p></div><div class="modal-footer border-secondary"><button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button></div></div></div></div>
+        <div class="modal fade" id="gamingModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content bg-dark text-white rounded-corners"><div class="modal-header border-secondary"><h5 class="modal-title h4"><span class="material-symbols-outlined" style="vertical-align: -5px;">stadia_controller</span> Gaming & Interactive</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Showcase interactive projects, game development updates, or playable demos.</p></div><div class="modal-footer border-secondary"><button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+        <hr>
+
+        <section id="jumbotron" class="jumbotron-fade">
+            <div class="p-5 mb-4 bg-dark rounded-corners">
+                <div class="container-fluid py-5">
+                   <div class="row align-items-center">
+                       <div class="col-md-6">
+                           <img src="https://picsum.photos/800/600?random=2" class="img-fluid rounded-corners" alt="Stylish placeholder">
+                       </div>
+                       <div class="col-md-6">
+                           <blockquote class="blockquote mt-4 mt-md-0">
+                               <p class="mb-0">"Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros."</p>
+                               <footer class="blockquote-footer mt-2">A Very Important Person</footer>
+                           </blockquote>
+                       </div>
+                   </div>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+        
+        <section id="downloads">
+            <h2 class="text-center mb-4">Downloads</h2>
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white rounded-corners mb-2"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">Product Brochure.pdf</h5><small>3.4 MB</small></div><p class="mb-1">Our latest product catalog with all the new features.</p></a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white rounded-corners mb-2"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">User Manual v2.1.zip</h5><small>15.2 MB</small></div><p class="mb-1">The complete user manual for our flagship product.</p></a>
+            </div>
+        </section>
+        
+        <div id="dynamic-content"></div>
+
+        <div id="content-loader">
+             <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+    </div><section id="sticker-jumbotron-section" class="mt-5">
+        <div class="comic-jumbotron">
+            <div class="container">
+                <div class="row justify-content-around">
+                    <div class="col-auto">
+                        <div class="card pokemon-card card-pastel-pink">
+                            <img src="https://picsum.photos/seed/pika/200/120" class="card-img-top" alt="Pastel Card Image 1">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: 'Bangers', cursive; color: #333;">Card One</h5>
+                                <p class="card-text">A bright and fun sticker card.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                         <div class="card pokemon-card card-pastel-blue">
+                            <img src="https://picsum.photos/seed/squirtle/200/120" class="card-img-top" alt="Pastel Card Image 2">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: 'Bangers', cursive; color: #333;">Card Two</h5>
+                                <p class="card-text">Another cool pastel sticker.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                         <div class="card pokemon-card card-pastel-green">
+                            <img src="https://picsum.photos/seed/bulba/200/120" class="card-img-top" alt="Pastel Card Image 3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: 'Bangers', cursive; color: #333;">Card Three</h5>
+                                <p class="card-text">Collect them all today!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer id="contact" class="bg-dark text-white pt-5 pb-4 mt-5">
+        <div class="container text-center text-md-start"><div class="row text-center text-md-start"><div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3"><h5 class="text-uppercase mb-4 font-weight-bold text-light">Contact</h5><p><span class="material-symbols-outlined" style="vertical-align: bottom;">mail</span> info@neatbrand.com</p><p><span class="material-symbols-outlined" style="vertical-align: bottom;">call</span> +1 234 567 8900</p><p><span class="material-symbols-outlined" style="vertical-align: bottom;">print</span> +1 234 567 8901</p></div><div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3"><h5 class="text-uppercase mb-4 font-weight-bold text-light">Locations</h5><p>123 Coding Lane, Tech City, 10101</p><p>456 Byte Boulevard, Silicon Valley, 94043</p><p>789 Server Street, Digital Ocean, 20202</p></div><div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3"><h5 class="text-uppercase mb-4 font-weight-bold text-light">Affiliates</h5><p><a href="#" class="text-white" style="text-decoration: none;">Web Solutions Inc.</a></p><p><a href="#" class="text-white" style="text-decoration: none;">Creative Designs Co.</a></p><p><a href="#" class="text-white" style="text-decoration: none;">Data Systems LLC</a></p></div></div></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- Master Video URL Lists ---
+    const mainVideoUrls = [
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4", 
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4"
+    ];
+
+    const fjvidsUrls = [
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
+        "https://storage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
+    ];
+
+    // --- Observer for Fade-in and Slide-in animations ---
+    const animatedElements = document.querySelectorAll('.jumbotron-fade, #sticker-jumbotron-section');
+    if (animatedElements.length > 0) {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        animatedElements.forEach(el => observer.observe(el));
+    }
+
+
+    // --- Top Featured Videos Section Logic ---
+    const mainVideoPlayer = document.getElementById('main-video-player');
+    const loadMoreMainBtn = document.getElementById('load-more-videos-btn');
+    const mainVideoGallery = document.getElementById('video-gallery');
+    let mainPageVideoIndex = 0;
+
+    if (mainVideoPlayer && mainVideoUrls.length > 0) {
+        const firstUrl = mainVideoUrls[0];
+        mainVideoPlayer.innerHTML = `<source src="${firstUrl}" type="video/${firstUrl.split('.').pop()}">`;
+        mainVideoPlayer.load();
+        mainPageVideoIndex = 1;
+    }
+
+    if (loadMoreMainBtn && mainVideoGallery) {
+        loadMoreMainBtn.addEventListener('click', function() {
+            const videosToLoad = 2;
+            const newVideos = [];
+
+            for (let i = 0; i < videosToLoad; i++) {
+                if (mainPageVideoIndex >= mainVideoUrls.length) break;
+
+                const url = mainVideoUrls[mainPageVideoIndex];
+                const col = document.createElement('div');
+                col.className = 'col-md-6 new-video-wrapper';
+
+                col.innerHTML = `
+                    <video class="video-player-main rounded-corners" controls preload="metadata">
+                        <source src="${url}" type="video/${url.split('.').pop()}">
+                    </video>
+                `;
+                mainVideoGallery.appendChild(col);
+                newVideos.push(col);
+                mainPageVideoIndex++;
+            }
+
+            setTimeout(() => {
+                newVideos.forEach(vid => vid.classList.add('visible'));
+            }, 50);
+
+            if (mainPageVideoIndex >= mainVideoUrls.length) {
+                this.style.display = 'none';
+            }
+        });
+    }
+
+    // --- Generic Modal Video Gallery Logic ---
+    const setupVideoGalleryModal = (modalId, gridContainerId, loadMoreBtnId, videoUrls) => {
+        const modal = document.getElementById(modalId);
+        const gridContainer = document.getElementById(gridContainerId);
+        const loadMoreBtn = document.getElementById(loadMoreBtnId);
+
+        if (!modal || !gridContainer || !loadMoreBtn) return;
+
+        let currentIndex = 0;
+        const videosPerRow = 3;
+        let animationDirection = 'left';
+
+        const loadGalleryVideos = () => {
+            const videosToLoad = videoUrls.slice(currentIndex, currentIndex + videosPerRow);
+            if (videosToLoad.length === 0) return;
+
+            const row = document.createElement('div');
+            const directionClass = animationDirection === 'left' ? 'slide-from-left' : 'slide-from-right';
+            row.className = `row d-flex justify-content-center gallery-row ${directionClass}`;
+
+            videosToLoad.forEach(url => {
+                const col = document.createElement('div');
+                col.className = 'col-auto';
+                col.innerHTML = `<div class="gallery-item-wrapper"><video class="gallery-video" controls preload="metadata"><source src="${url}" type="video/${url.split('.').pop()}"></video></div>`;
+                row.appendChild(col);
+            });
+            
+            gridContainer.appendChild(row);
+
+            setTimeout(() => {
+                row.classList.add('is-visible');
+            }, 50);
+
+            currentIndex += videosToLoad.length;
+            animationDirection = (animationDirection === 'left') ? 'right' : 'left';
+
+            if (currentIndex >= videoUrls.length) {
+                loadMoreBtn.style.display = 'none';
+            }
+        };
+
+        loadMoreBtn.addEventListener('click', loadGalleryVideos);
+
+        modal.addEventListener('show.bs.modal', () => {
+            gridContainer.innerHTML = '';
+            currentIndex = 0;
+            animationDirection = 'left';
+            loadMoreBtn.style.display = 'block';
+            loadGalleryVideos(); 
+            loadGalleryVideos(); 
+        });
+    };
+    
+    // Initialize both modal galleries
+    setupVideoGalleryModal('moviesModal', 'videoGalleryGridContainer', 'galleryLoadMoreBtn', mainVideoUrls);
+    setupVideoGalleryModal('fjvidsModal', 'fjvidsGalleryGridContainer', 'fjvidsGalleryLoadMoreBtn', fjvidsUrls);
+
+
+    // --- Endless Scrolling Logic (at bottom of page) ---
+    const loader = document.getElementById('content-loader');
+    const dynamicContent = document.getElementById('dynamic-content');
+    let isLoading = false;
+    let contentCounter = 0;
+    const maxContentItems = 10;
+
+    function loadMoreContent() {
+        if (contentCounter >= maxContentItems || isLoading) {
+            if (contentCounter >= maxContentItems) loader.style.display = 'none';
+            return;
+        }
+        isLoading = true;
+        loader.style.display = 'block';
+
+        setTimeout(() => {
+            for (let i = 0; i < 2; i++) {
+                if (contentCounter >= maxContentItems) break;
+                contentCounter++;
+                const newContent = document.createElement('div');
+                newContent.className = 'row g-4 my-4';
+                newContent.innerHTML = `<div class="col-md-6"><img src="https://picsum.photos/800/450?random=${contentCounter}" class="img-fluid rounded-corners" alt="Dynamically loaded image ${contentCounter}"></div><div class="col-md-6"><h3>More Content ${contentCounter}</h3><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p></div>`;
+                dynamicContent.appendChild(newContent);
+            }
+            if (contentCounter >= maxContentItems) {
+                loader.style.display = 'none';
+            }
+            isLoading = false;
+        }, 1000);
+    }
+
+    window.addEventListener('scroll', () => {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+           loadMoreContent();
+        }
+    });
+
+    if (dynamicContent) {
+        loadMoreContent();
+    }
+});
+</script>
+
+</body>
+</html>
